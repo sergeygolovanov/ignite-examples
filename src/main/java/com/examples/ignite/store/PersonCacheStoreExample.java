@@ -57,7 +57,6 @@ public class PersonCacheStoreExample {
         cfg.setAtomicityMode(TRANSACTIONAL);
         cfg.setReadThrough(true);
         cfg.setWriteThrough(true);
-
         return cfg;
     }
 
