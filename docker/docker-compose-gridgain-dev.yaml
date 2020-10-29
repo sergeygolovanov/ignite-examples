@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  cachestore-gridgain-1:
+    container_name: "cachestore-gridgain-1"
+    image: gitlab.axxelia.com:5001/axxalon/axxalon/gridgain/community:8.7.15
+    volumes:
+      - ../gridgain-persistence:/data/persistence
+      - server-gridgain-context.xml:/opt/gridgain/config/default-config.xml
+    environment:
+      - IGNITE_WORK_DIR=/data/persistence
+      - OPTION_LIBS=ignite-spring,ignite-indexing,ignite-rest-http
+      - IGNITE_H2_DEBUG_CONSOLE=true
+    ports:
+      - 10800:10800
+      - 47500-47509:47500-47509
+      - 47100:47100
+      - 18080:8080
+    restart: always
