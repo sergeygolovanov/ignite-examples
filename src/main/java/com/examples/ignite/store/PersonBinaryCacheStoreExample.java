@@ -19,7 +19,6 @@ import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.binary.BinaryObject;
 import org.apache.ignite.binary.BinaryObjectBuilder;
-import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
 import org.apache.ignite.cache.store.CacheStoreAdapter;
 import org.apache.ignite.cache.store.CacheStoreSessionListener;
@@ -32,28 +31,18 @@ import static org.apache.ignite.cache.CacheAtomicityMode.TRANSACTIONAL;
 
 public class PersonBinaryCacheStoreExample {
 
+    private static final Long[] IDS = {1L, 2L, 3L, 4L};
     private static final String CACHE_NAME = PersonBinaryCacheStoreExample.class.getSimpleName() + "." + Person.class.getSimpleName();
 
     public static void main(String[] args) throws IgniteException {
         try (Ignite ignite = Ignition.start("src/main/resources/example-ignite.xml")) {
             try (IgniteCache<Long, BinaryObject> cacheBinaryObject = ignite.getOrCreateCache(cacheConfiguration());
-                 IgniteCache<Long, BinaryObject> cachePerson = ignite.cache(CACHE_NAME)) {
-//                System.out.println("-----------------------------");
-//                Person person = cacheBinaryObject.get(1L).deserialize();
-//                cacheBinaryObject.query(new ScanQuery<>(null)).forEach(
-//                        p -> System.out.println(">> " + p)
-//                );
-//                Stream.of(1L, 2L, 3L, 4L)
-//                        .forEach(
-//                                o -> System.out.println(cacheBinaryObject.get(o))
-//                        );
+                 IgniteCache<Long, Person> cachePerson = ignite.cache(CACHE_NAME)) {
                 System.out.println("-----------------------------");
-                Stream.of(1L, 2L, 3L, 4L)
-                        .forEach(
-                                o -> System.out.println(cachePerson.get(o))
-                        );
+                Stream.of(IDS).forEach(o -> System.out.println(cacheBinaryObject.get(o)));
                 System.out.println("-----------------------------");
-
+                Stream.of(IDS).forEach(o -> System.out.println(cachePerson.get(o)));
+                System.out.println("-----------------------------");
             } finally {
                 ignite.destroyCache(CACHE_NAME);
             }
@@ -63,7 +52,6 @@ public class PersonBinaryCacheStoreExample {
     private static CacheConfiguration<Long, BinaryObject> cacheConfiguration() {
         CacheConfiguration<Long, BinaryObject> cacheConfiguration = new CacheConfiguration<>(CACHE_NAME);
         cacheConfiguration.setAtomicityMode(TRANSACTIONAL);
-//        FactoryBuilder.factoryOf(CacheExampleBinaryStore.class);
 //        cacheConfiguration.setStoreKeepBinary(true);
         cacheConfiguration.setCacheStoreFactory(FactoryBuilder.factoryOf(CacheExampleBinaryStore.class));
         cacheConfiguration.setCacheStoreSessionListenerFactories((Factory<CacheStoreSessionListener>) () -> {
@@ -112,8 +100,8 @@ public class PersonBinaryCacheStoreExample {
 
         @Override
         public void delete(Object key) throws CacheWriterException {
-            System.out.println(key);
         }
+
     }
 
     static class Person implements Serializable {
