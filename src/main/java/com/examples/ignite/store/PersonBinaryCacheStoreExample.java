@@ -36,18 +36,24 @@ public class PersonBinaryCacheStoreExample {
 
     public static void main(String[] args) throws IgniteException {
         try (Ignite ignite = Ignition.start("src/main/resources/example-ignite.xml")) {
-            IgniteBinary igniteBinary = ignite.binary();
-            try (IgniteCache<Long, BinaryObject> cache = ignite.getOrCreateCache(cacheConfiguration())) {
+            try (IgniteCache<Long, BinaryObject> cacheBinaryObject = ignite.getOrCreateCache(cacheConfiguration());
+                 IgniteCache<Long, BinaryObject> cachePerson = ignite.cache(CACHE_NAME)) {
+//                System.out.println("-----------------------------");
+//                Person person = cacheBinaryObject.get(1L).deserialize();
+//                cacheBinaryObject.query(new ScanQuery<>(null)).forEach(
+//                        p -> System.out.println(">> " + p)
+//                );
+//                Stream.of(1L, 2L, 3L, 4L)
+//                        .forEach(
+//                                o -> System.out.println(cacheBinaryObject.get(o))
+//                        );
                 System.out.println("-----------------------------");
-                Person person = cache.get(1L).deserialize();
-                cache.query(new ScanQuery<>(null)).forEach(
-                        p -> System.out.println(">> " + p)
-                );
                 Stream.of(1L, 2L, 3L, 4L)
                         .forEach(
-                                o -> System.out.println(cache.get(o))
+                                o -> System.out.println(cachePerson.get(o))
                         );
                 System.out.println("-----------------------------");
+
             } finally {
                 ignite.destroyCache(CACHE_NAME);
             }
@@ -57,8 +63,8 @@ public class PersonBinaryCacheStoreExample {
     private static CacheConfiguration<Long, BinaryObject> cacheConfiguration() {
         CacheConfiguration<Long, BinaryObject> cacheConfiguration = new CacheConfiguration<>(CACHE_NAME);
         cacheConfiguration.setAtomicityMode(TRANSACTIONAL);
-        FactoryBuilder.factoryOf(CacheExampleBinaryStore.class);
-        cacheConfiguration.setStoreKeepBinary(true);
+//        FactoryBuilder.factoryOf(CacheExampleBinaryStore.class);
+//        cacheConfiguration.setStoreKeepBinary(true);
         cacheConfiguration.setCacheStoreFactory(FactoryBuilder.factoryOf(CacheExampleBinaryStore.class));
         cacheConfiguration.setCacheStoreSessionListenerFactories((Factory<CacheStoreSessionListener>) () -> {
             CacheSpringStoreSessionListener lsnr = new CacheSpringStoreSessionListener();
