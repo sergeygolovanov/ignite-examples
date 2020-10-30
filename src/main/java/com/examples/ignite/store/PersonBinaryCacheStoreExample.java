@@ -36,8 +36,10 @@ public class PersonBinaryCacheStoreExample {
 
     public static void main(String[] args) throws IgniteException {
         try (Ignite ignite = Ignition.start("src/main/resources/example-ignite.xml")) {
-            try (IgniteCache<Long, BinaryObject> cache = ignite.getOrCreateCache(cacheConfiguration()).withKeepBinary()) {
+            IgniteBinary igniteBinary = ignite.binary();
+            try (IgniteCache<Long, BinaryObject> cache = ignite.getOrCreateCache(cacheConfiguration())) {
                 System.out.println("-----------------------------");
+                Person person = cache.get(1L).deserialize();
                 cache.query(new ScanQuery<>(null)).forEach(
                         p -> System.out.println(">> " + p)
                 );
@@ -56,6 +58,7 @@ public class PersonBinaryCacheStoreExample {
         CacheConfiguration<Long, BinaryObject> cacheConfiguration = new CacheConfiguration<>(CACHE_NAME);
         cacheConfiguration.setAtomicityMode(TRANSACTIONAL);
         FactoryBuilder.factoryOf(CacheExampleBinaryStore.class);
+        cacheConfiguration.setStoreKeepBinary(true);
         cacheConfiguration.setCacheStoreFactory(FactoryBuilder.factoryOf(CacheExampleBinaryStore.class));
         cacheConfiguration.setCacheStoreSessionListenerFactories((Factory<CacheStoreSessionListener>) () -> {
             CacheSpringStoreSessionListener lsnr = new CacheSpringStoreSessionListener();
