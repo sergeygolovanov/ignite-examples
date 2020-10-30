@@ -40,12 +40,13 @@ public class PersonBinaryCacheStoreGridExample {
 
     public static void main(String[] args) throws IgniteException {
         try (Ignite ignite = Ignition.start(igniteConfiguration())) {
-            try (IgniteCache<Long, BinaryObject> cacheBinaryObject = ignite.getOrCreateCache(cacheConfiguration());
-                 IgniteCache<Long, Person> cachePerson = ignite.cache(CACHE_NAME)) {
+            try (IgniteCache<Long, BinaryObject> cacheBinaryObject = ignite.getOrCreateCache(cacheConfiguration())
+//                 IgniteCache<Long, Person> cachePerson = ignite.cache(CACHE_NAME)
+            ) {
                 System.out.println("-----------------------------");
                 Stream.of(IDS).forEach(o -> System.out.println(cacheBinaryObject.get(o)));
                 System.out.println("-----------------------------");
-                Stream.of(IDS).forEach(o -> System.out.println(cachePerson.get(o)));
+//                Stream.of(IDS).forEach(o -> System.out.println(cachePerson.get(o)));
                 System.out.println("-----------------------------");
             } finally {
                 ignite.destroyCache(CACHE_NAME);
@@ -67,7 +68,7 @@ public class PersonBinaryCacheStoreGridExample {
     private static CacheConfiguration<Long, BinaryObject> cacheConfiguration() {
         CacheConfiguration<Long, BinaryObject> cacheConfiguration = new CacheConfiguration<>(CACHE_NAME);
         cacheConfiguration.setAtomicityMode(TRANSACTIONAL);
-        cacheConfiguration.setStoreKeepBinary(true);
+//        cacheConfiguration.setStoreKeepBinary(true);
         cacheConfiguration.setCacheStoreFactory(FactoryBuilder.factoryOf(CacheExampleBinaryStore.class));
         cacheConfiguration.setCacheStoreSessionListenerFactories((Factory<CacheStoreSessionListener>) () -> {
             CacheSpringStoreSessionListener lsnr = new CacheSpringStoreSessionListener();
