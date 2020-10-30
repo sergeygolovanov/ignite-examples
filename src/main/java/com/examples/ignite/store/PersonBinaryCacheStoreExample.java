@@ -36,7 +36,7 @@ public class PersonBinaryCacheStoreExample {
 
     public static void main(String[] args) throws IgniteException {
         try (Ignite ignite = Ignition.start("src/main/resources/example-ignite.xml")) {
-            try (IgniteCache<Long, BinaryObject> cache = ignite.getOrCreateCache(cacheConfiguration())) {
+            try (IgniteCache<Long, BinaryObject> cache = ignite.getOrCreateCache(cacheConfiguration()).withKeepBinary()) {
                 System.out.println("-----------------------------");
                 cache.query(new ScanQuery<>(null)).forEach(
                         p -> System.out.println(">> " + p)

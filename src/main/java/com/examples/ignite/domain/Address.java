@@ -21,6 +21,7 @@ public class Address implements Binarylizable {
 
     @Override
     public void writeBinary(BinaryWriter writer) throws BinaryObjectException {
+        System.out.println("----------------------------------------------");
         writer.writeString("street", street);
         writer.writeInt("zip", zip);
     }
@@ -38,5 +39,5 @@ public class Address implements Binarylizable {
                 ", zip=" + zip +
                 '}';
     }
-    
+
 }
